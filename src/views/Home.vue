@@ -4,6 +4,7 @@
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
       <v-toolbar-title>Application News</v-toolbar-title>
       <v-spacer></v-spacer>
+      <BtnWrongApi />
       <v-btn icon>
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
@@ -51,6 +52,7 @@ import { mapGetters, mapActions } from 'vuex';
 import NewsCard from '../components/news-card/NewsCard.vue';
 import SearchBar from '../components/search-bar/SearchBar.vue';
 import FilterBar from '../components/filter/filter.vue';
+import BtnWrongApi from '../components/btn-wrong-api/BtnWrongApi.vue';
 
 export default {
   name: 'NewsCardList',
@@ -58,6 +60,7 @@ export default {
     NewsCard,
     SearchBar,
     FilterBar,
+    BtnWrongApi,
   },
   methods: {
     ...mapActions(['fetchNews']),

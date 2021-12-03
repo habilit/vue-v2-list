@@ -24,3 +24,8 @@ export const getNews = async () => {
 
   return response?.data ? response?.data : null;
 };
+
+export const getWrongApi = async () => {
+  const response = await axios.get('https://newsapi.org/v2/sources?apiKey');
+  return response;
+};

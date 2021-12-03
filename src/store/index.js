@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { get, isEmpty, find } from 'lodash';
 import { getCategories, makeid } from '../shared/index';
-import { getHeadlineNews } from '../services/news-service';
+import { getHeadlineNews, getWrongApi } from '../services/news-service';
 
 const searchByFilter = (newsList, selectedFilter) => newsList.filter((item) => {
   const sorceName = get(item, ['source', 'name']);
@@ -25,6 +25,7 @@ export default new Vuex.Store({
     foundNews: null,
     currentKeyword: '',
     currentFilter: '',
+    apiErrorMsg: '',
     categories: [],
   },
   mutations: {
@@ -51,6 +52,9 @@ export default new Vuex.Store({
     },
     SET_ISLOADING(state, isLoading) {
       state.isLoading = isLoading;
+    },
+    SET_API_ERROR(state, msg) {
+      state.apiErrorMsg = msg;
     },
     UPDATE_DISPLAYED_NEWS(state, { updatedNews, catagories }) {
       state.displayedNews = updatedNews;
@@ -83,6 +87,13 @@ export default new Vuex.Store({
         filteredNews = searchByFilter(filteredNews, selectedFilter);
       }
       commit('SET_DISPLAYED_NEWS', filteredNews);
+    },
+    setError({ commit }, error) {
+      const msg = {
+        status: error?.status || '',
+        message: error?.message || '',
+      };
+      commit('SET_API_ERROR', msg);
     },
     updateTitle({ commit, state }, updatedData) {
       const { newsId, newTitle } = updatedData;
@@ -129,6 +140,22 @@ export default new Vuex.Store({
       commit('SET_FOUND_NEWS', foundNews);
       return foundNews;
     },
+    async getWrongApi({ commit }) {
+      let res;
+      try {
+        res = await getWrongApi();
+      } catch (error) {
+        if (error.response) {
+          const errMsg = get(error, ['response', 'data', 'message']);
+          const errCode = get(error, ['response', 'status']);
+          commit('SET_API_ERROR', {
+            status: errCode,
+            message: errMsg,
+          });
+        }
+      }
+      return res;
+    },
   },
   modules: {
   },
@@ -147,6 +174,9 @@ export default new Vuex.Store({
     },
     currentKeyword(state) {
       return state.currentKeyword;
+    },
+    apiErrorMsg(state) {
+      return state.apiErrorMsg;
     },
   },
 });
